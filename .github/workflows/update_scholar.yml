@@ -22,6 +22,16 @@ jobs:
           python -m pip install --upgrade pip
           pip install requests beautifulsoup4
 
+      - name: Check SCHOLAR_USER_ID secret
+        env:
+          SCHOLAR_USER_ID: ${{ secrets.SCHOLAR_USER_ID }}
+        run: |
+          if [ -z "$SCHOLAR_USER_ID" ]; then
+            echo "Error: SCHOLAR_USER_ID secret is not set. Set repository secret SCHOLAR_USER_ID to your Google Scholar user id (e.g. _cxg7m4AAAAJ)." >&2
+            exit 1
+          fi
+          echo "SCHOLAR_USER_ID is set."
+
       - name: Fetch Scholar counts
         env:
           SCHOLAR_USER_ID: ${{ secrets.SCHOLAR_USER_ID }}
