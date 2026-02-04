@@ -94,24 +94,24 @@ science, informatics, and product teams in high-velocity, ambiguous environments
     <div class="citation-metrics">
       <div class="metric">
         <h3>Total Citations</h3>
-        <div class="metric-value">204</div>
+        <div class="metric-value" id="scholar-citations">—</div>
       </div>
       <div class="metric">
         <h3>H-index</h3>
-        <div class="metric-value">9</div>
+        <div class="metric-value" id="scholar-hindex">—</div>
       </div>
       <div class="metric">
         <h3>i10-index</h3>
-        <div class="metric-value">9</div>
+        <div class="metric-value" id="scholar-i10">—</div>
       </div>
     </div>
     
     <div class="citations-info">
-      <p><em>Data from Google Scholar. Last updated: January 21, 2026</em></p>
+      <p><em>Data from Google Scholar. Last updated: <span id="scholar-updated">—</span></em></p>
     </div>
     
     <div class="scholar-links">
-      <p>Please find a full publication list on <a href="https://scholar.google.com/citations?user=_cxg7m4AAAAJ&hl=en&oi=ao" target="_blank">Google Scholar</a></p>
+      <p>Please find a full publication list on <a id="scholar-link" href="https://scholar.google.com/citations?user=_cxg7m4AAAAJ&hl=en&oi=ao" target="_blank">Google Scholar</a></p>
     </div>
     
     <div class="publications-list">
@@ -405,6 +405,30 @@ function sendEmail() {
   var email = 'samir.rachid.zaim@gmail.com';
   window.location.href = 'mailto:' + email;
 }
+
+// Load scholar metrics (updated by GitHub Action)
+(function loadScholar() {
+  fetch('/assets/scholar.json')
+    .then(function (r) {
+      if (!r.ok) throw new Error('no scholar data');
+      return r.json();
+    })
+    .then(function (d) {
+      try {
+        document.getElementById('scholar-citations').textContent = d.citations ?? '—';
+        document.getElementById('scholar-hindex').textContent = d.hindex ?? '—';
+        document.getElementById('scholar-i10').textContent = d.i10 ?? '—';
+        document.getElementById('scholar-updated').textContent = new Date(d.updated).toLocaleString();
+        if (d.profile) document.getElementById('scholar-link').href = d.profile;
+      } catch (e) {
+        console.warn('Scholar widget: DOM elements missing', e);
+      }
+    })
+    .catch(function () {
+      // asset might not exist yet (first run) — leave placeholders and link remains to Google Scholar profile
+      console.info('Scholar JSON not available yet or fetch failed.');
+    });
+})();
 </script>
 
 </body>
