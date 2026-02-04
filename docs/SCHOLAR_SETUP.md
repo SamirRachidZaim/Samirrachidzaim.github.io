@@ -1,17 +1,29 @@
-Setup: automatic Google Scholar counts
+Manual updates: Google Scholar counts
 
-1) Add your Google Scholar user id as a GitHub repository secret:
-   - Name: `SCHOLAR_USER_ID`
-   - Value: the id in your profile URL (e.g. `_cxg7m4AAAAJ`)
+Automatic fetching has been disabled due to reliability and blocking issues with Google Scholar.
 
-2) The workflow runs daily (08:00 UTC) and commits `assets/scholar.json` with the latest counts.
+To update citation metrics manually, edit the `assets/scholar.json` file and commit the change. The website reads this file on load and will display the updated counts after deployment.
 
-3) The site reads `assets/scholar.json` and updates the citation counts automatically.
+Example `assets/scholar.json`:
 
-Notes and caveats
+{
+  "citations": 204,
+  "hindex": 9,
+  "i10": 9,
+  "updated": "2026-01-21T00:00:00Z",
+  "profile": "https://scholar.google.com/citations?user=_cxg7m4AAAAJ&hl=en"
+}
 
-- There is no official Google Scholar API. This solution scrapes your Scholar profile page once per day.
-- Scraping Google Scholar may violate their terms and may result in blocking; keep the frequency low and monitor failures.
-- If you prefer not to scrape, you can run the script locally and commit `assets/scholar.json` manually, or host a trusted server that fetches counts and exposes them as JSON.
+How to update manually:
 
-If you want, I can: add a badge (image), change frequency, or switch to a different fetch method (e.g., server with proxy).
+- Edit `assets/scholar.json` with the new numeric metrics and an ISO 8601 UTC timestamp in `updated`, for example `2026-02-03T12:00:00Z`.
+- Commit and push:
+
+  git add assets/scholar.json
+  git commit -m "chore: manual update Google Scholar counts"
+  git push
+
+Notes:
+
+- There is no official Google Scholar API and scraping from public CI runners was blocked (403). Manual updates remove that dependency.
+- If you'd like automated, reliable updates later, consider using a self-hosted runner or a paid API (I can help implement either).

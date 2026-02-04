@@ -1,51 +1,13 @@
-name: Update Google Scholar counts
+name: Disabled - Update Google Scholar counts
 
-on:
-  schedule:
-    - cron: '0 8 * * *' # daily at 08:00 UTC
-  workflow_dispatch: {}
+# This workflow has been intentionally disabled to stop automatic fetching of Google Scholar counts.
+# Automatic scraping from CI runners was unreliable and was blocked by Google. The repository now uses manual updates of `assets/scholar.json`.
+
+on: []  # no triggers
 
 jobs:
-  update:
+  disabled:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.x'
-
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install requests beautifulsoup4
-
-      - name: Check SCHOLAR_USER_ID secret
-        env:
-          SCHOLAR_USER_ID: ${{ secrets.SCHOLAR_USER_ID }}
-        run: |
-          if [ -z "$SCHOLAR_USER_ID" ]; then
-            echo "Error: SCHOLAR_USER_ID secret is not set. Set repository secret SCHOLAR_USER_ID to your Google Scholar user id (e.g. _cxg7m4AAAAJ)." >&2
-            exit 1
-          fi
-          echo "SCHOLAR_USER_ID is set."
-
-      - name: Fetch Scholar counts
-        env:
-          SCHOLAR_USER_ID: ${{ secrets.SCHOLAR_USER_ID }}
-        run: |
-          python scripts/fetch_scholar.py --user "$SCHOLAR_USER_ID" --output assets/scholar.json
-
-      - name: Commit changes
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add assets/scholar.json || true
-          git diff --quiet --cached || (
-            git commit -m "chore: update Google Scholar counts [skip ci]" || true
-            git push
-          )
+      - name: Disabled
+        run: echo "This workflow has been disabled. See docs/SCHOLAR_SETUP.md for manual update instructions."
